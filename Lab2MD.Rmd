@@ -1,0 +1,91 @@
+---
+title: "Lab 2"
+author: "Mason Witcraft"
+date: "January 27, 2019"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 1
+
+#### Working Directory
+```{r}
+getwd()
+```
+
+# Task 2
+
+#### Read Data
+```{r}
+epa = read.csv("EPAGAS.csv")
+head(epa)
+```
+
+# Task 3
+
+#### Create *mpg* Vector
+```{r}
+mpg = epa$MPG
+```
+#### Define *z = ($x_i$ - $\bar{x}$)/$s_x$*
+```{r}
+z = (mpg - mean(mpg))/sd(mpg)
+```
+#### Verify *$\bar{z}$ = 0*
+```{r}
+mean(z)
+```
+#### Verify *$s^2_z$ = 1*
+```{r}
+var(z)
+```
+#### Find values of *mpg* that are possible outliers
+```{r}
+mpg[abs(z) >= 2 & abs(z) <= 3]
+```
+#### Find values of *mpg* that are defined as outliers
+```{r}
+mpg[abs(z) > 3]
+```
+#### Using the lattice package, contruct a dotplot with colors *Red=outlier* and *Blue=possible outlier*
+```{r}
+library(lattice)
+colorOutliers = ifelse(abs(z) > 3, "Red", ifelse(abs(z) >= 2 & abs(z) <= 3, "Blue", "Black"))  
+dotplot(mpg, col=colorOutliers)
+```
+
+# Task 4
+
+#### Make a boxplot of the mpg variable
+```{r}
+with(epa, boxplot(MPG, ylab = "MPG", col = "green3", horizontal = TRUE))
+title("MPG Boxplot")
+```
+
+#### Chebyshev's Theorem:
+* 75% of the data must lie within 2 standard deviations of the mean
+* Using the *mpg* data:
+```{r}
+length(mpg[abs(z) < 2])/length(mpg)
+```
+* Chebyshev does agree with this data, as 96% > 75%
+
+#### Empirical Rule:
+* 95% of the data must lie within 2 standard deviations of the mean
+* Using the *mpg* data:
+```{r}
+length(mpg[abs(z) < 2])/length(mpg)
+```
+* This data does correspond well with the Empirical Rule
+* The Empirical Rule is valid in this case because 96% of the data is within 2 standard deviations
+* Also, the data is a standard bell curve, so the Empirical Rule is still valid in this case:
+```{r}
+hist(mpg)
+```
+
